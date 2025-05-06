@@ -13,46 +13,30 @@ commands:
       - run:
           name: Instalar dependencias
           command: |
-            python -m venv venv
-            . venv/bin/activate
-            pip install pytest
-
+            pip install pytest flake8
 
 jobs:
   test:
     executor: python-executor
-    parallelism: 2  # Ejecuta pruebas en paralelo (divide archivos)
+    parallelism: 2  # Ejecutar pruebas en paralelo
     steps:
-      - checkout
-      - run:
-          name: Instalar pytest
-          command: |
-            python -m venv venv
-            . venv/bin/activate
-            pip install pytest
-
+      - install-deps
       - run:
           name: Ejecutar pruebas en paralelo
           command: |
-            . venv/bin/activate
-            pytest test_cliente.py
+            circleci tests split --split-by=files | xargs pytest
 
   lint:
     executor: python-executor
     steps:
-      - checkout
-      - run:
-          name: Instalar flake8
-          command: |
-            pip install flake8
+      - install-deps
       - run:
           name: Revisar estilo de código con flake8
           command: |
-            . venv/bin/activate
-            flake8 . || true
-
-
-
+            flake8 . > flake8-report.txt || true
+      - store_artifacts:
+          path: flake8-report.txt
+          destination: flake8-report
 
   run-script:
     executor: python-executor
@@ -61,7 +45,7 @@ jobs:
       - run:
           name: Ejecutar main.py
           command: |
-            python main.py < input.txt  # Simula entrada si la tienes preparada
+            python main.py < input.txt
 
 workflows:
   version: 2
@@ -75,7 +59,6 @@ workflows:
 
 notifications:
   webhooks:
-    # Puedes añadir aquí tu webhook de Slack o Discord, por ejemplo
     - url: https://hooks.slack.com/services/TU_WEBHOOK_AQUI
       events:
         - success
