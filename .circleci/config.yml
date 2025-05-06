@@ -16,7 +16,6 @@ commands:
             python -m venv venv
             . venv/bin/activate
             pip install pytest
-            pip install autopep8
 
 
 jobs:
@@ -31,7 +30,6 @@ jobs:
             python -m venv venv
             . venv/bin/activate
             pip install pytest
-            pip install autopep8
 
       - run:
           name: Ejecutar pruebas en paralelo
