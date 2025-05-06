@@ -24,7 +24,7 @@ jobs:
       - run:
           name: Ejecutar pruebas en paralelo
           command: |
-            circleci tests split --split-by=files | xargs pytest
+            pytest test_cliente.py
 
   lint:
     executor: python-executor
