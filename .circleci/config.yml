@@ -43,6 +43,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Crear input.txt simulado
+          command: |
+            echo -e "1\n123\n4\n" > input.txt  # Simula: opción 1, ID 123, luego salir
+      - run:
           name: Ejecutar main.py
           command: |
             python main.py < input.txt
