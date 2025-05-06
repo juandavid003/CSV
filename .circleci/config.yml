@@ -88,7 +88,7 @@ workflows:
 
 notifications:
   webhooks:
-    - url: https://hooks.slack.com/services/TU_WEBHOOK_AQUI
+    - url: https://hooks.slack.com/services/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
       events:
         - success
         - fail
