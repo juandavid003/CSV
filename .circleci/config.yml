@@ -18,7 +18,7 @@ commands:
 jobs:
   test:
     executor: python-executor
-    parallelism: 2  # Ejecutar pruebas en paralelo
+    parallelism: 2
     steps:
       - install-deps
       - run:
@@ -44,22 +44,47 @@ jobs:
       - checkout
       - run:
           name: Crear input.txt simulado
-          command: |
-            echo -e "1\n123\n4\n" > input.txt  # Simula: opción 1, ID 123, luego salir
+          command: echo -e "1\n123\n4\n" > input.txt
       - run:
           name: Ejecutar main.py
+          command: python main.py < input.txt
+
+  security-scan:
+    executor: python-executor
+    steps:
+      - install-deps
+      - run:
+          name: Escaneo de seguridad con bandit
           command: |
-            python main.py < input.txt
+            pip install bandit
+            bandit -r . > bandit-report.txt || true
+      - store_artifacts:
+          path: bandit-report.txt
+          destination: bandit-report
 
 workflows:
   version: 2
+
   build_and_test:
     jobs:
       - lint
       - test
+      - security-scan
       - run-script:
           requires:
             - test
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 3 * * *"
+          filters:
+            branches:
+              only: main
+    jobs:
+      - lint
+      - test
+      - security-scan
 
 notifications:
   webhooks:
