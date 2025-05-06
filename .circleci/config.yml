@@ -33,7 +33,7 @@ jobs:
           name: Ejecutar pruebas en paralelo
           command: |
             . venv/bin/activate
-            circleci tests split test_cliente.py | xargs pytest
+            pytest test_cliente.py
 
   lint:
     executor: python-executor
