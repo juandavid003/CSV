@@ -6,7 +6,7 @@ import sys
 def send_email(subject, body):
     sender_email = "rjuandavid2002@gmail.com"
     receiver_email = "rjuandavid2002@gmail.com"
-    password = "el_gatofly2"
+    password = "gdce uvja oaqp ojgr"
 
     # Configurar el servidor SMTP
     server = smtplib.SMTP("smtp.gmail.com", 587)
