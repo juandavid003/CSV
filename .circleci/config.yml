@@ -13,14 +13,7 @@ commands:
       - run:
           name: Instalar dependencias
           command: |
-            pip install pytest flake8 smtplib
-
-  send_email:
-    steps:
-      - run:
-          name: Enviar correo de notificación
-          command: |
-            python send_email.py "${CIRCLE_JOB}" "${CIRCLE_STATUS}" "${CIRCLE_BUILD_URL}"
+            pip install pytest flake8
 
 jobs:
   test:
@@ -69,6 +62,7 @@ jobs:
           path: bandit-report.txt
           destination: bandit-report
 
+          
   notify:
     executor: python-executor
     steps:
@@ -77,18 +71,19 @@ jobs:
           name: Enviar notificación por correo
           command: |
             python send_email.py "${CIRCLE_JOB}" "${CIRCLE_STATUS}" "${CIRCLE_BUILD_URL}"
+    
 
 workflows:
   version: 2
+
   build_and_test:
     jobs:
       - lint
       - test
       - security-scan
-      - run-script
-      - notify:
+      - run-script:
           requires:
-            - run-script
+            - test
 
   nightly:
     triggers:
@@ -101,6 +96,12 @@ workflows:
       - lint
       - test
       - security-scan
-      - notify:
-          requires:
-            - security-scan
+
+# notifications:
+#   webhooks:
+#     - url: https://hooks.slack.com/services/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
+#       events:
+#         - success
+#         - fail
+#         - fixed
+#         - on_hold
