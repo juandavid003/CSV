@@ -62,7 +62,6 @@ jobs:
           path: bandit-report.txt
           destination: bandit-report
 
-          
   notify:
     executor: python-executor
     steps:
@@ -71,7 +70,6 @@ jobs:
           name: Enviar notificación por correo
           command: |
             python send_email.py "${CIRCLE_JOB}" "${CIRCLE_STATUS}" "${CIRCLE_BUILD_URL}"
-    
 
 workflows:
   version: 2
@@ -84,6 +82,9 @@ workflows:
       - run-script:
           requires:
             - test
+      - notify:
+          requires:
+            - run-script
 
   nightly:
     triggers:
@@ -96,12 +97,6 @@ workflows:
       - lint
       - test
       - security-scan
-
-# notifications:
-#   webhooks:
-#     - url: https://hooks.slack.com/services/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
-#       events:
-#         - success
-#         - fail
-#         - fixed
-#         - on_hold
+      - notify:
+          requires:
+            - security-scan
