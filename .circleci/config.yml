@@ -24,7 +24,14 @@ jobs:
       - run:
           name: Ejecutar pruebas en paralelo
           command: |
-            pytest test_cliente.py
+            if [ "$CIRCLE_NODE_INDEX" == "0" ]; then
+              # Ejecutar solo la primera prueba
+              pytest test_cliente.py::test_cliente_creation
+            else
+              # Ejecutar las otras dos pruebas
+              pytest test_cliente.py::test_cliente_invalid_email
+              pytest test_cliente.py::test_cliente_empty_name
+            fi
 
   lint:
     executor: python-executor
